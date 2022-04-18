@@ -12,11 +12,13 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Dependencies
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- [Apollo Client](https://www.npmjs.com/package/@apollo/client) - Fully-featured caching GraphQL client with integrations for React, Angular, and more. It allows you to easily build UI components that fetch data via GraphQL.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- [React table](https://github.com/TanStack/react-table/tree/v7) - Lightweight and extensible data tables for React.
+
+- [GraphQL.js](https://www.npmjs.com/package/graphql) - The JavaScript reference implementation for GraphQL, a query language for APIs created by Facebook.
 
 ## Learn More
 
