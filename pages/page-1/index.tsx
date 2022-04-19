@@ -11,6 +11,14 @@ import matchSorter from "match-sorter";
 import schema from "./rickMorty.gql";
 import { useQuery, useApolloClient } from "@apollo/client";
 import { Table, Paginator, TableAdditionalInfoWrapper } from "../../components";
+import { useCustomFilters, useServerFilters } from "../../hooks";
+import Search from "../../components/Table/Filters/Search";
+import {
+  ClearFiltersComponent,
+  FiltersComponent,
+} from "../../components/Table/Filters";
+import { debounce } from "lodash";
+import { fabClasses } from "@mui/material";
 
 // Define a default UI for filtering
 function GlobalFilter({
@@ -46,10 +54,10 @@ function GlobalFilter({
 }
 
 // Define a default UI for filtering
-function DefaultColumnFilter({
+const DefaultColumnFilter = ({
   column: { filterValue, preFilteredRows, setFilter },
-}) {
-  const count = preFilteredRows.length;
+}) => {
+  const count = preFilteredRows?.length;
 
   return (
     <input
@@ -60,7 +68,7 @@ function DefaultColumnFilter({
       placeholder={`Search ${count} records...`}
     />
   );
-}
+};
 
 // This is a custom filter UI for selecting
 // a unique option from a list
@@ -451,10 +459,6 @@ function App() {
 
   const listInnerRef = useRef();
 
-  // useEffect(() => {
-  //   refetch({ page: data?.characters?.info?.next });
-  // }, [filters]);
-
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
@@ -463,6 +467,42 @@ function App() {
       }
     }
   };
+  const { fuzzyText, text } = useCustomFilters();
+  const filterTypes = useMemo(
+    () => ({
+      fuzzyText,
+      text,
+    }),
+    []
+  );
+
+  const tableConfig = useTable(
+    {
+      columns: getCols(isFilterOpened),
+      data: mappedData,
+      filterTypes,
+      manualFilters: true,
+      manualGlobalFilter: true,
+    },
+    useFilters,
+    useGlobalFilter,
+    useSortBy
+  );
+
+  const {
+    headerGroups,
+    state,
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    setAllFilters,
+  } = tableConfig;
+
+  useServerFilters({
+    tableState: state,
+    onFiltersChanged: (filterVariables) => {
+      refetch({ ...filterVariables });
+    },
+  });
 
   return (
     <>
@@ -471,23 +511,27 @@ function App() {
         ref={listInnerRef}
         style={{ height: "500px", overflowY: "auto" }}
       >
-        {/* TODO: this is for different table layout proof of concept */}
-        {/* <TableAdditionalInfoWrapper>
-          <Paginator
-            paginatorData={{
-              count: data?.characters?.info?.count,
-              length: data?.characters?.results?.length,
-            }}
+        <TableAdditionalInfoWrapper>
+          {isFilterOpened && (
+            <FiltersComponent
+              setIsFilterOpened={setIsFilterOpened}
+              isFilterOpened={isFilterOpened}
+              headerGroups={headerGroups}
+              setAllFilters={setAllFilters}
+            />
+          )}
+          <ClearFiltersComponent setAllFilters={setAllFilters} />
+          <button onClick={() => setIsFilterOpened(!isFilterOpened)}>
+            Filter
+          </button>
+
+          <Search
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilter={state.globalFilter}
+            setGlobalFilter={setGlobalFilter}
           />
-        </TableAdditionalInfoWrapper> */}
-        <Table
-          onScroll={onScroll}
-          ref={listInnerRef}
-          isFilterOpened={isFilterOpened}
-          setIsFilterOpened={setIsFilterOpened}
-          columns={getCols(isFilterOpened)}
-          data={mappedData}
-        />
+        </TableAdditionalInfoWrapper>
+        <Table tableConfig={tableConfig} />
       </div>
       <Paginator
         paginatorData={{
