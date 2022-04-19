@@ -1,14 +1,21 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { Character } from "./models";
+import * as models from "./models";
+
+const rootQueryFields = Object.fromEntries(
+  Object.values(models)
+    .filter(({ rootQueryKey }) => !!rootQueryKey)
+    .map(({ rootQueryKey, rootQueryTypePolicy }) => [
+      rootQueryKey,
+      rootQueryTypePolicy,
+    ])
+);
 
 const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_RICK_AND_MORTY,
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
-        fields: {
-          characters: Character.mergePolicy,
-        },
+        fields: rootQueryFields,
       },
     },
   }),
