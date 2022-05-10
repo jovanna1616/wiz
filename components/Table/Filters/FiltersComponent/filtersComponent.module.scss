@@ -1,0 +1,15 @@
+.filter {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  @apply bg-light-gray;
+  padding: 1rem;
+
+  button {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+  }
+}

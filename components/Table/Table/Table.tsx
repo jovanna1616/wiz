@@ -8,8 +8,10 @@ import {
   useTable,
 } from "react-table";
 import { debounce } from "lodash";
-import Search from "./Filters/Search";
-import { useCustomFilters } from "../../hooks";
+import Search from "../Filters/Search/Search";
+import { useCustomFilters } from "../../../hooks";
+import styles from "./table.module.scss";
+import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 
 interface TableProps {
   tableConfig: any;
@@ -32,11 +34,7 @@ function NumberRangeColumnFilter({
   }, [id, preFilteredRows]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-      }}
-    >
+    <div className="flex">
       <input
         value={filterValue[0] || ""}
         type="number"
@@ -48,6 +46,7 @@ function NumberRangeColumnFilter({
           ]);
         }}
         placeholder={`Min (${min})`}
+        className="width-[70px] mr-2"
         style={{
           width: "70px",
           marginRight: "0.5rem",
@@ -98,7 +97,7 @@ const Table: FC<TableProps> = ({ tableConfig }) => {
 
   return (
     <>
-      <table {...getTableProps()}>
+      <table className={styles.table} {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -108,13 +107,19 @@ const Table: FC<TableProps> = ({ tableConfig }) => {
                     (column as any).getSortByToggleProps()
                   )}
                 >
-                  {column.render("Header")}
-                  <span>
-                    {(column as any).isSorted
-                      ? (column as any).isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : " 🔽🔼"}
+                  <span className="inline-flex items-center">
+                    {column.render("Header")}
+                    <span>
+                      {(column as any).isSorted ? (
+                        (column as any).isSortedDesc ? (
+                          <FaSortDown />
+                        ) : (
+                          <FaSortUp />
+                        )
+                      ) : (
+                        <FaSort />
+                      )}
+                    </span>
                   </span>
                 </th>
               ))}
@@ -136,7 +141,6 @@ const Table: FC<TableProps> = ({ tableConfig }) => {
           })}
         </tbody>
       </table>
-      <br />
     </>
   );
 };

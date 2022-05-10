@@ -1,5 +1,5 @@
 const TableAdditionalInfoWrapper = ({ children }) => (
-  <div style={{ background: "lightgray" }}>{children}</div>
+  <div className="bg-light-blue p-2">{children}</div>
 );
 
 export default TableAdditionalInfoWrapper;

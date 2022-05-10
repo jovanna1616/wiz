@@ -1,5 +1,6 @@
 import { debounce } from "lodash";
 import { useCallback, useState } from "react";
+import styles from "./search.module.scss";
 
 const Search = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) => {
   const count = preGlobalFilteredRows.length;
@@ -14,21 +15,15 @@ const Search = ({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) => {
     []
   );
   return (
-    <span>
-      Search:{" "}
-      <input
-        value={value || ""}
-        onChange={(e) => {
-          setValue(e.target.value);
-          onChange(e.target.value);
-        }}
-        placeholder={`${count} records...`}
-        style={{
-          fontSize: "1.1rem",
-          border: "0",
-        }}
-      />
-    </span>
+    <input
+      value={value || ""}
+      onChange={(e) => {
+        setValue(e.target.value);
+        onChange(e.target.value);
+      }}
+      placeholder="Search..."
+      className={styles.search}
+    />
   );
 };
 

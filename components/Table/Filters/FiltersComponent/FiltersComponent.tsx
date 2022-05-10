@@ -1,4 +1,6 @@
-import ClearFiltersComponent from "./ClearFiltersComponent";
+import ClearFiltersComponent from "../ClearFiltersComponent";
+import style from "./filtersComponent.module.scss";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 const renderFiltersComponent = (headerGroups: any) => {
   {
@@ -7,11 +9,16 @@ const renderFiltersComponent = (headerGroups: any) => {
         {headerGroup.headers.map((column) => (
           <th
             {...column.getHeaderProps((column as any).getSortByToggleProps())}
+            className="pr-4"
           >
             {column.canFilter && column.Filter ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <span>{column.render("Header")}</span>
-                <span>{column.render("Filter")}</span>
+              <div className="flex direction-column">
+                <span className="flex direction-column mr-2">
+                  {column.render("Header")}
+                </span>
+                <span className="flex direction-column mr-2">
+                  {column.render("Filter")}
+                </span>
               </div>
             ) : null}
           </th>
@@ -28,18 +35,10 @@ const FiltersComponent = ({
   setAllFilters,
 }) => {
   return (
-    <div
-      style={{
-        width: "500px",
-        height: "500px",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        backgroundColor: "lightgray",
-      }}
-    >
-      <ClearFiltersComponent setAllFilters={setAllFilters} />
-      <button onClick={() => setIsFilterOpened(!isFilterOpened)}>Filter</button>
+    <div className={style.filter}>
+      <button onClick={() => setIsFilterOpened(!isFilterOpened)}>
+        <AiOutlineCloseCircle fontSize={25} />
+      </button>
       {renderFiltersComponent(headerGroups)}
     </div>
   );

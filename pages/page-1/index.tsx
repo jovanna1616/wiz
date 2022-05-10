@@ -12,13 +12,15 @@ import schema from "./rickMorty.gql";
 import { useQuery, useApolloClient } from "@apollo/client";
 import { Table, Paginator, TableAdditionalInfoWrapper } from "../../components";
 import { useCustomFilters, useServerFilters } from "../../hooks";
-import Search from "../../components/Table/Filters/Search";
+import Search from "../../components/Table/Filters/Search/Search";
 import {
   ClearFiltersComponent,
   FiltersComponent,
 } from "../../components/Table/Filters";
 import { debounce } from "lodash";
 import { fabClasses } from "@mui/material";
+import { BiFilter } from "react-icons/bi";
+import Modal from "../../components/Modal/Modal";
 
 // Define a default UI for filtering
 function GlobalFilter({
@@ -467,6 +469,7 @@ function App() {
       }
     }
   };
+
   const { fuzzyText, text } = useCustomFilters();
   const filterTypes = useMemo(
     () => ({
@@ -504,12 +507,14 @@ function App() {
     },
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <div
         onScroll={onScroll}
         ref={listInnerRef}
-        style={{ height: "500px", overflowY: "auto" }}
+        className="h-[500px] overflow-y-auto relative"
       >
         <TableAdditionalInfoWrapper>
           {isFilterOpened && (
@@ -520,16 +525,22 @@ function App() {
               setAllFilters={setAllFilters}
             />
           )}
-          <ClearFiltersComponent setAllFilters={setAllFilters} />
-          <button onClick={() => setIsFilterOpened(!isFilterOpened)}>
-            Filter
-          </button>
-
-          <Search
-            preGlobalFilteredRows={preGlobalFilteredRows}
-            globalFilter={state.globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
+          <span className="flex justify-between	items-center">
+            <Search
+              preGlobalFilteredRows={preGlobalFilteredRows}
+              globalFilter={state.globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+            <span className="flex justify-center items-center">
+              <ClearFiltersComponent setAllFilters={setAllFilters} />
+              <button
+                onClick={() => setIsFilterOpened(!isFilterOpened)}
+                className="ml-1"
+              >
+                <BiFilter fontSize={30} />
+              </button>
+            </span>
+          </span>
         </TableAdditionalInfoWrapper>
         <Table tableConfig={tableConfig} />
       </div>
@@ -539,6 +550,14 @@ function App() {
           length: data?.characters?.results?.length,
         }}
       />
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="mt-2 border border-gray border-solid p-2"
+      >
+        Open Modal
+      </button>
+
+      <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </>
   );
 }
